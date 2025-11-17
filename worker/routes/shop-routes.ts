@@ -10,6 +10,17 @@ const createMessageSchema = z.object({
   message: z.string(),
 });
 
+const feedbackSchema = z.object({
+  sessionId: z.string(),
+  messageID: z.string(),
+  productId: z.string(),
+  rating: z.number().min(1).max(5),
+  reason: z.array(z.string()).optional(),
+  reason_text: z.string().optional(),
+  user_query: z.string().optional(),
+  feedback_type: z.string().optional(),
+});
+
 export const shopRoutes = new Hono<HonoContext>()
   .post(
     '/message',
@@ -72,4 +83,31 @@ export const shopRoutes = new Hono<HonoContext>()
       console.error('Error in /sessions/messages/:sessionId:', error);
       return c.json({ error: 'Failed to fetch session messages' }, 500);
     }
-  });
+  })
+  .post(
+    '/feedback',
+    zValidator('json', feedbackSchema),
+    async (c) => {
+      try {
+        const feedbackData = c.req.valid('json');
+
+        const response = await fetch(`${EXTERNAL_API_BASE}/api/feedback/product`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(feedbackData),
+        });
+
+        if (!response.ok) {
+          throw new Error(`External API error: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        return c.json(data);
+      } catch (error) {
+        console.error('Error in /feedback:', error);
+        return c.json({ error: 'Failed to submit feedback' }, 500);
+      }
+    }
+  );

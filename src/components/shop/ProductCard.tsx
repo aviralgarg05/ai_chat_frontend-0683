@@ -1,7 +1,14 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ExternalLink, ChevronDown, ChevronUp, MoreVertical, MessageSquare } from 'lucide-react';
+import { ProductFeedbackModal } from './ProductFeedbackModal';
 
 interface Product {
   id: string;
@@ -19,10 +26,14 @@ interface Product {
 
 interface ProductCardProps {
   product: Product;
+  sessionId?: string;
+  messageId?: string;
+  onFeedbackSuccess?: () => void;
 }
 
-export function ProductCard({ product }: ProductCardProps) {
+export function ProductCard({ product, sessionId, messageId, onFeedbackSuccess }: ProductCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 
   const formatPrice = (price: number | string) => {
     const numPrice = typeof price === 'string' ? parseFloat(price) : price;
@@ -39,18 +50,43 @@ export function ProductCard({ product }: ProductCardProps) {
     getPriceAsNumber(product.discounted_price) !== getPriceAsNumber(product.price) &&
     getPriceAsNumber(product.discounted_price) > 0;
 
+  const canProvideFeedback = sessionId && messageId;
+
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="aspect-square relative overflow-hidden bg-muted">
-        <img
-          src={product.image}
-          alt={product.title}
-          className="object-cover w-full h-full"
-          onError={(e) => {
-            e.currentTarget.src = '/shopping-assistant-fo5Sg.png';
-          }}
-        />
-      </div>
+    <>
+      <Card className="overflow-hidden hover:shadow-lg transition-shadow">
+        <div className="aspect-square relative overflow-hidden bg-muted">
+          <img
+            src={product.image}
+            alt={product.title}
+            className="object-cover w-full h-full"
+            onError={(e) => {
+              e.currentTarget.src = '/shopping-assistant-fo5Sg.png';
+            }}
+          />
+          {canProvideFeedback && (
+            <div className="absolute top-2 right-2">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="h-8 w-8 rounded-full bg-background/80 backdrop-blur-sm hover:bg-background shadow-sm"
+                    aria-label="Product options"
+                  >
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => setIsFeedbackModalOpen(true)}>
+                    <MessageSquare className="mr-2 h-4 w-4" />
+                    Give Feedback
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
+        </div>
       <CardHeader className="space-y-2 md:space-y-3 pb-2 md:pb-3 p-3 md:p-6">
         <CardTitle className="text-sm md:text-base font-semibold line-clamp-2 leading-tight">
           {product.title}
@@ -108,5 +144,20 @@ export function ProductCard({ product }: ProductCardProps) {
         </Button>
       </CardContent>
     </Card>
+
+    {canProvideFeedback && (
+      <ProductFeedbackModal
+        isOpen={isFeedbackModalOpen}
+        onClose={() => setIsFeedbackModalOpen(false)}
+        productId={product.id}
+        productTitle={product.title}
+        sessionId={sessionId}
+        messageId={messageId}
+        onSuccess={() => {
+          onFeedbackSuccess?.();
+        }}
+      />
+    )}
+    </>
   );
 }

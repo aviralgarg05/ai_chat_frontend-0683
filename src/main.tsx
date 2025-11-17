@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AutumnProvider } from "autumn-js/react";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
+import { Toaster } from "sonner";
 import App from "./app.tsx";
 import "./styles/global.css";
 
@@ -14,6 +15,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <AutumnProvider betterAuthUrl={import.meta.env.VITE_BETTER_AUTH_URL}>
         <QueryClientProvider client={queryClient}>
           <App />
+          <Toaster position="top-center" richColors />
         </QueryClientProvider>
       </AutumnProvider>
     </ThemeProvider>
