@@ -28,7 +28,7 @@ interface Message {
   products?: Product[];
 }
 
-const API_BASE = 'https://c351da9cbae0.ngrok-free.app';
+const API_BASE = 'https://4468a3289269.ngrok-free.app';
 
 export function ShoppingChat() {
   const [showFilters, setShowFilters] = useState(true);
