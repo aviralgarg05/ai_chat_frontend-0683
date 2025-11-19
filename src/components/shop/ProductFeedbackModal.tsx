@@ -107,7 +107,8 @@ export function ProductFeedbackModal({
         feedback_type: feedbackCategory || undefined,
       };
 
-      const response = await fetch('/api/shop/feedback', {
+      const API_BASE = 'https://30e6667b4973.ngrok-free.app';
+      const response = await fetch(`${API_BASE}/api/feedback/product`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

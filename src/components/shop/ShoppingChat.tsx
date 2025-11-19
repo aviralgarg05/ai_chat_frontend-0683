@@ -29,7 +29,7 @@ interface Message {
   messageId?: string;
 }
 
-const API_BASE = 'https://c43dc2df954a.ngrok-free.app';
+const API_BASE = 'https://30e6667b4973.ngrok-free.app';
 
 export function ShoppingChat() {
   const [showFilters, setShowFilters] = useState(true);
@@ -60,13 +60,13 @@ export function ShoppingChat() {
   const loadSessionMessages = async (sessionIdToLoad: string) => {
     try {
       const response = await fetch(`${API_BASE}/api/sessions/messages/${sessionIdToLoad}`);
-      
+
       if (!response.ok) {
         throw new Error('Failed to load messages');
       }
 
       const data = await response.json() as { messages?: any[] };
-      
+
       if (data && Array.isArray(data.messages)) {
         const loadedMessages: Message[] = data.messages.map((msg: any) => [
           {
@@ -136,7 +136,7 @@ export function ShoppingChat() {
       const payload: { message: string; sessionId?: string; userId?: string } = {
         message: message,
       };
-      
+
       if (sessionId) {
         payload.sessionId = sessionId;
       }
@@ -232,7 +232,7 @@ export function ShoppingChat() {
       const payload: { message: string; sessionId?: string; userId?: string } = {
         message: messageToSend,
       };
-      
+
       if (sessionId) {
         payload.sessionId = sessionId;
       }
@@ -326,12 +326,12 @@ export function ShoppingChat() {
       ) : (
         <>
           {isSidebarOpen && (
-            <div 
+            <div
               className="fixed inset-0 bg-black/50 z-40 md:hidden"
               onClick={() => setIsSidebarOpen(false)}
             />
           )}
-          
+
           <SessionSidebar
             userId={userId}
             currentSessionId={sessionId}
@@ -340,7 +340,7 @@ export function ShoppingChat() {
             isOpen={isSidebarOpen}
             onClose={() => setIsSidebarOpen(false)}
           />
-          
+
           <div className="flex-1 flex flex-col min-w-0">
             <div className="border-b bg-background md:hidden px-3 py-2 flex items-center gap-3">
               <Button
@@ -363,7 +363,7 @@ export function ShoppingChat() {
                   <div className="space-y-2">
                     <h3 className="text-xl md:text-2xl font-semibold">Welcome to ShopAssist AI</h3>
                     <p className="text-sm md:text-base text-muted-foreground max-w-md">
-                      I'm your personal shopping assistant. Tell me what you're looking for, 
+                      I'm your personal shopping assistant. Tell me what you're looking for,
                       your budget, and I'll help you find the perfect products!
                     </p>
                   </div>
@@ -372,9 +372,8 @@ export function ShoppingChat() {
                 messages.map((message) => (
                   <div key={message.id} className="space-y-4">
                     <div
-                      className={`flex gap-2 md:gap-3 ${
-                        message.role === 'user' ? 'justify-end' : 'justify-start'
-                      }`}
+                      className={`flex gap-2 md:gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'
+                        }`}
                     >
                       {message.role === 'assistant' && (
                         <div className="flex-shrink-0 w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center">
@@ -382,11 +381,10 @@ export function ShoppingChat() {
                         </div>
                       )}
                       <div
-                        className={`max-w-[85%] md:max-w-[70%] rounded-2xl px-3 py-2 md:px-4 md:py-3 ${
-                          message.role === 'user'
-                            ? 'bg-primary text-primary-foreground'
-                            : 'bg-muted'
-                        }`}
+                        className={`max-w-[85%] md:max-w-[70%] rounded-2xl px-3 py-2 md:px-4 md:py-3 ${message.role === 'user'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'bg-muted'
+                          }`}
                       >
                         <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
                       </div>
@@ -409,7 +407,7 @@ export function ShoppingChat() {
                               product={product}
                               sessionId={sessionId || undefined}
                               messageId={message.messageId}
-                              onFeedbackSuccess={() => {}}
+                              onFeedbackSuccess={() => { }}
                             />
                           ))}
                         </div>
@@ -431,8 +429,8 @@ export function ShoppingChat() {
                   disabled={isLoading}
                   className="flex-1 h-10 md:h-11 text-sm md:text-base"
                 />
-                <Button 
-                  onClick={handleSend} 
+                <Button
+                  onClick={handleSend}
                   disabled={isLoading || !input.trim()}
                   className="h-10 w-10 md:h-11 md:w-11"
                   size="icon"

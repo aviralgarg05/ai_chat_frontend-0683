@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { zValidator } from '@hono/zod-validator';
 import type { HonoContext } from '../types';
 
-const EXTERNAL_API_BASE = 'https://c43dc2df954a.ngrok-free.app';
+const EXTERNAL_API_BASE = 'https://9885997c7adc.ngrok-free.app';
 
 const createMessageSchema = z.object({
   sessionId: z.string().optional(),
