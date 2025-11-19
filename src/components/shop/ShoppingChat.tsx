@@ -29,7 +29,7 @@ interface Message {
   messageId?: string;
 }
 
-const API_BASE = 'https://30e6667b4973.ngrok-free.app';
+const API_BASE = 'https://49627f66c3c3.ngrok-free.app';
 
 export function ShoppingChat() {
   const [showFilters, setShowFilters] = useState(true);
@@ -401,15 +401,24 @@ export function ShoppingChat() {
                           Recommended Products ({message.products.length})
                         </p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-                          {message.products.map((product) => (
-                            <ProductCard
-                              key={product.id}
-                              product={product}
-                              sessionId={sessionId || undefined}
-                              messageId={message.messageId}
-                              onFeedbackSuccess={() => { }}
-                            />
-                          ))}
+                          {message.products.map((product) => {
+                            // Find the user message that corresponds to this assistant message
+                            const messageIndex = messages.findIndex(m => m.id === message.id);
+                            const userMessage = messageIndex > 0 && messages[messageIndex - 1]?.role === 'user'
+                              ? messages[messageIndex - 1]
+                              : null;
+                            
+                            return (
+                              <ProductCard
+                                key={product.id}
+                                product={product}
+                                sessionId={sessionId || undefined}
+                                messageId={message.messageId}
+                                userQuery={userMessage?.content}
+                                onFeedbackSuccess={() => { }}
+                              />
+                            );
+                          })}
                         </div>
                       </div>
                     )}

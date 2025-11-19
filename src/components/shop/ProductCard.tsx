@@ -28,10 +28,11 @@ interface ProductCardProps {
   product: Product;
   sessionId?: string;
   messageId?: string;
+  userQuery?: string;
   onFeedbackSuccess?: () => void;
 }
 
-export function ProductCard({ product, sessionId, messageId, onFeedbackSuccess }: ProductCardProps) {
+export function ProductCard({ product, sessionId,userQuery,  messageId, onFeedbackSuccess }: ProductCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
 

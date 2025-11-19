@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -26,6 +26,7 @@ interface ProductFeedbackModalProps {
   productTitle: string;
   sessionId: string;
   messageId: string;
+  userQuery?: string;
   onSuccess: () => void;
 }
 
@@ -60,6 +61,7 @@ export function ProductFeedbackModal({
   productTitle,
   sessionId,
   messageId,
+  userQuery: initialUserQuery,
   onSuccess,
 }: ProductFeedbackModalProps) {
   const [rating, setRating] = useState<number>(0);
@@ -68,10 +70,17 @@ export function ProductFeedbackModal({
   const [showCustomReason, setShowCustomReason] = useState(false);
   const [customReason, setCustomReason] = useState('');
   const [feedbackCategory, setFeedbackCategory] = useState('');
-  const [userQuery, setUserQuery] = useState('');
+  const [userQuery, setUserQuery] = useState(initialUserQuery || '');
   const [moreDetails, setMoreDetails] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+
+  // Update userQuery when initialUserQuery changes
+  useEffect(() => {
+    if (initialUserQuery) {
+      setUserQuery(initialUserQuery);
+    }
+  }, [initialUserQuery]);
 
   const handleReasonToggle = (reason: string) => {
     if (selectedReasons.includes(reason)) {
@@ -91,23 +100,34 @@ export function ProductFeedbackModal({
     setIsSubmitting(true);
 
     try {
-      const reasons = [...selectedReasons];
+      // Format reason: send selected predefined reasons as array (or single string if only one)
+      // Send custom reason and more details in reason_text
+      const reasonValue = selectedReasons.length > 0 
+        ? (selectedReasons.length === 1 ? selectedReasons[0] : selectedReasons)
+        : null;
+
+      // Combine custom reason and more details into reason_text
+      const reasonTextParts = [];
       if (customReason.trim()) {
-        reasons.push(customReason.trim());
+        reasonTextParts.push(customReason.trim());
       }
+      if (moreDetails.trim()) {
+        reasonTextParts.push(moreDetails.trim());
+      }
+      const reasonTextValue = reasonTextParts.length > 0 ? reasonTextParts.join(' ') : null;
 
       const payload = {
         sessionId,
         messageID: messageId,
         productId,
         rating,
-        reason: reasons.length > 0 ? reasons : undefined,
-        reason_text: moreDetails.trim() || undefined,
-        user_query: userQuery.trim() || undefined,
-        feedback_type: feedbackCategory || undefined,
+        reason: reasonValue,
+        reason_text: reasonTextValue,
+        user_query: userQuery.trim() || null,
+        feedback_type: feedbackCategory || null,
       };
 
-      const API_BASE = 'https://30e6667b4973.ngrok-free.app';
+      const API_BASE = 'https://49627f66c3c3.ngrok-free.app';
       const response = await fetch(`${API_BASE}/api/feedback/product`, {
         method: 'POST',
         headers: {
@@ -271,7 +291,7 @@ export function ProductFeedbackModal({
 
           <div>
             <label className="text-sm font-medium mb-2 block">
-              Original Search/Request (optional)
+              Original Search/Request {initialUserQuery ? '(pre-filled)' : '(optional)'}
             </label>
             <Textarea
               value={userQuery}
@@ -279,6 +299,7 @@ export function ProductFeedbackModal({
               placeholder="What were you looking for?"
               className="min-h-[80px] text-sm"
               maxLength={500}
+              disabled={!!initialUserQuery}
             />
             <p className="text-xs text-muted-foreground mt-1 text-right">
               {userQuery.length}/500
