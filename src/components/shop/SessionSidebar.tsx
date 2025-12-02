@@ -19,7 +19,7 @@ interface SessionSidebarProps {
   onClose: () => void;
 }
 
-const API_BASE = 'https://49627f66c3c3.ngrok-free.app';
+const API_BASE = 'http://localhost:8001';
 
 export function SessionSidebar({
   userId,
