@@ -127,7 +127,7 @@ export function ProductFeedbackModal({
         feedback_type: feedbackCategory || null,
       };
 
-      const API_BASE = 'https://49627f66c3c3.ngrok-free.app';
+      const API_BASE = 'http://localhost:8001';
       const response = await fetch(`${API_BASE}/api/feedback/product`, {
         method: 'POST',
         headers: {
